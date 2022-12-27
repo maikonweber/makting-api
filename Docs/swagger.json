@@ -1,0 +1,20 @@
+{
+   "openapi" : "3.0.0",
+   "info" : {
+            "title" : "API Dashboard V2",
+            "description" : "API para Utilização do Dashboard",
+            "termsOfService" : "https://localhost:3055/terms", 
+            "version" : "1.0.0"
+   },
+   "servers" : [
+            {
+                        "url" : "http://localhost:3055/api",
+                        "description" : "API"
+            }
+   ],
+   "paths" : {
+            "/products" : {
+                        
+            }
+   }
+}           

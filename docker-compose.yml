@@ -1,0 +1,15 @@
+services:
+  db:
+    container_name: cook_book
+    image: postgres:11.6-alpine
+    restart: always
+    command: postgres -c logging_collector=on -c log_destination=stderr
+    environment:
+      - POSTGRES_USER=cook
+      - POSTGRES_PASSWORD=cook
+      - POSTGRES_DB=cook
+      - POSTGRES_HOST=localhost
+      - POSTGRES_INITDB_ARGS=--locale=en_US.UTF-8
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore
+    ports:
+      - "5732:5432"
