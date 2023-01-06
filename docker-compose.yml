@@ -13,3 +13,4 @@ services:
       - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore
     ports:
       - "5732:5432"
+      

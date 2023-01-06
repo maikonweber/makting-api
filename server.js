@@ -62,8 +62,6 @@ app.get('/api/cook-book:id', async (req, res) => {
 app.get('/api/cook-book', async (req, res) => {
   const result = await getCook_()
   res.send(result);
-
-
 })
 
 
