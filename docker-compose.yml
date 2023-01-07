@@ -13,4 +13,13 @@ services:
       - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore
     ports:
       - "5732:5432"
-      
+  redis:
+    image: redislabs/redismod
+    restart: always
+    ports:
+      - '127.0.0.1:6379:6379/tcp'
+    healthcheck:
+      test: redis-cli ping
+      interval: 3s
+      timeout: 5s
+      retries: 5
