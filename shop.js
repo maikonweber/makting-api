@@ -6,15 +6,36 @@ const appid = process.env.AppID
 const senha = process.env.Senha
 const crypto = require('crypto')
 
-const dateNow =`1672776131`
+var utcMoment = moment.utc();
+
+const dateNow = '1676329017'
+
+let parse = `
+  {"query":"{
+    shopeeOfferV2 {\n
+      nodes {\n
+        offerName\n
+        imageUrl\n
+        offerLink\n
+        offerType\n
+        categoryId\n
+        commissionRate\n
+      }\n
+    }\n
+  }"
+}`
 
 
-const requestBody = `{"query":"{\nbrandOffer{\n    nodes{\n        commissionRate\n        offerName\n    }\n}\n}"}`
+let requestBody = `{"query":"{\nbrandOffer{\n    nodes{\n        commissionRate\n        offerName\n   offerLink\n   }\n}\n}"}`
 
+requestBody = JSON.stringify(requestBody)
+
+
+console.log(requestBody)
 const endpoint = 'https://open-api.affiliate.shopee.com.br/graphql'
 
 
-const signature = appid + dateNow + JSON.stringify(requestBody) + senha
+const signature = appid + dateNow + requestBody + senha
 
 console.log(signature)
 
@@ -27,7 +48,6 @@ const headers = {
   "content-type" : "application/json",
   "Authorization" : `SHA256 Credential=${appid}, Timestamp=${dateNow}, Signature=${hash}`
 }
-
 
 console.log(headers)
 
