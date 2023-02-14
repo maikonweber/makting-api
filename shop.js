@@ -6,29 +6,22 @@ const appid = process.env.AppID
 const senha = process.env.Senha
 const crypto = require('crypto')
 
-var utcMoment = moment.utc();
+let timestamp = Math.floor(Date.now() / 1000);
+console.log(timestamp);
 
-const dateNow = '1676329017'
 
-let parse = `
-  {"query":"{
-    shopeeOfferV2 {\n
-      nodes {\n
-        offerName\n
-        imageUrl\n
-        offerLink\n
-        offerType\n
-        categoryId\n
-        commissionRate\n
-      }\n
-    }\n
-  }"
-}`
+const dateNow = timestamp;
 
+
+let parse = `{  shopeeOfferV2 {    nodes {      offerName      imageUrl      offerLink      offerType      categoryId    	commissionRate          }  }}`
+
+const response = {
+  "query": parse,
+}
 
 let requestBody = `{"query":"{\nbrandOffer{\n    nodes{\n        commissionRate\n        offerName\n   offerLink\n   }\n}\n}"}`
 
-requestBody = JSON.stringify(requestBody)
+requestBody = JSON.stringify(response)
 
 
 console.log(requestBody)
@@ -55,11 +48,10 @@ axios({
   url: endpoint,
   method: 'post',
   headers: headers,
-  data: requestBody
+  data: JSON.parse(requestBody)
 
  }).then(el => {
-  console.log(el)
-  console.log(el.data[`errors`])
+  console.log(el.dataS)
 })
 
 
