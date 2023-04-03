@@ -1,10 +1,23 @@
 const axios = require('axios')
 require('dotenv').config();
+const Redis = require("ioredis");
+const redis = new Redis({
+  host: 'localhost',
+  port: '6379'
+});
 
-const moment = require('moment');
+
 const appid = process.env.AppID
 const senha = process.env.Senha
-const crypto = require('crypto')
+const crypto = require('crypto');
+
+
+async function saveListInRedis(listName, listData) {
+  listData.forEach(function(item) {
+    console.log(item)
+    redis.rpush(listName, JSON.stringify(item));
+  })
+}
 
 let timestamp = Math.floor(Date.now() / 1000);
 console.log(timestamp);
@@ -12,47 +25,43 @@ console.log(timestamp);
 
 const dateNow = timestamp;
 
+const listItens = ['jogos', 'celular', 'fone', 'gamer', 'anime', 'videogames']
+const ProductArray = []
 
-let parse = `{  shopeeOfferV2 {    nodes {      offerName      imageUrl      offerLink      offerType      categoryId    	commissionRate          }  }}`
-
-const response = {
-  "query": parse,
-}
-
-let requestBody = `{"query":"{\nbrandOffer{\n    nodes{\n        commissionRate\n        offerName\n   offerLink\n   }\n}\n}"}`
-
-requestBody = JSON.stringify(response)
+listItens.forEach(el => {
+  let parse = `{  productOfferV2(keyword : "${el}" ) {    nodes {  itemId  commissionRate  imageUrl productName price  productLink }  }}`
 
 
-console.log(requestBody)
-const endpoint = 'https://open-api.affiliate.shopee.com.br/graphql'
+  const response = {
+    "query": parse,
+  }
 
+  let requestBody;
 
-const signature = appid + dateNow + requestBody + senha
+  requestBody = JSON.stringify(response)
 
-console.log(signature)
+  const endpoint = 'https://open-api.affiliate.shopee.com.br/graphql'
+  const signature = appid + dateNow + requestBody + senha
+  const hash = crypto.createHash('sha256').update(signature).digest('hex');
+  const headers = {
+    "content-type": "application/json",
+    "Authorization": `SHA256 Credential=${appid}, Timestamp=${dateNow}, Signature=${hash}`
+  }
 
-const hash = crypto.createHash('sha256').update(signature).digest('hex');
+  axios({
+    url: endpoint,
+    method: 'post',
+    headers: headers,
+    data: JSON.parse(requestBody)
+  }).then( async el => {
+    Object.values(el.data)[0]['productOfferV2']['nodes'].forEach(el => {
+      ProductArray.push(el)
+    })
 
-
-console.log(hash)
-
-const headers = {
-  "content-type" : "application/json",
-  "Authorization" : `SHA256 Credential=${appid}, Timestamp=${dateNow}, Signature=${hash}`
-}
-
-console.log(headers)
-
-axios({ 
-  url: endpoint,
-  method: 'post',
-  headers: headers,
-  data: JSON.parse(requestBody)
-
- }).then(el => {
-  console.log(el.dataS)
+  await saveListInRedis('ShopeeProduct', ProductArray);
+  })
 })
+
 
 
 

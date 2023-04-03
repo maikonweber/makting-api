@@ -14,3 +14,4 @@ CREATE TABLE travel_book (
  principal text,
  another jsonb 
 );
+

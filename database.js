@@ -1,4 +1,4 @@
-const pg = require('pg')
+cconst pg = require('pg')
 
 let client = {
    host: 'localhost',
