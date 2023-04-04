@@ -53,14 +53,13 @@ app.get('/api/cook-book:id', async (req, res) => {
   if (params != '' && params <= 100) {
     result = await getCookId(params)
   }
-  res.sendStatu(result);
+  res.sendStatus(result);
 })
 
 app.get('/api/cook-book', async (req, res) => {
   const result = await getCook_()
   res.send(result);
 })
-
 
 app.get('/api/shoope-banner', async(req, res) => {
   const result = redis.get
