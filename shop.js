@@ -6,26 +6,20 @@ const redis = new Redis({
   port: '6379'
 });
 
+const { saveListInRedis } = require('./redisDatabase');
+
 
 const appid = process.env.AppID
 const senha = process.env.Senha
 const crypto = require('crypto');
-
-
-async function saveListInRedis(listName, listData) {
-  listData.forEach(function(item) {
-    console.log(item)
-    redis.rpush(listName, JSON.stringify(item));
-  })
-}
-
+ 
 let timestamp = Math.floor(Date.now() / 1000);
 console.log(timestamp);
 
 
 const dateNow = timestamp;
 
-const listItens = ['jogos', 'celular', 'fone', 'gamer', 'anime', 'videogames']
+const listItens = ['jogos', 'celular', 'fone']
 const ProductArray = []
 
 listItens.forEach(el => {
