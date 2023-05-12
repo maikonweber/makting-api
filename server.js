@@ -7,6 +7,7 @@ const { createLogger, format, transports } = require('winston');
 const port = 3055
 const logger = require('./utils/logger');
 const { insertCook, getCookId, getCook_, insertTravel, selectTravel } = require('./database')
+const { getAllElements } = require('./redisDatabase');
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -23,48 +24,30 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(bodyParser.json());
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-// app.use('/', require('./Routes/timeRoute'));
 
-// app.post('/api/cook-book', cook_book.cook_book)
 
-app.get("/api/travel_book:id", async (req, res) => {
-  const params = req.params['id'].replace(':', '')
-  let result = 401
-  console.log(params)
-
-  if (params != '' && params <= 200) {
-    result = await selectTravel(params)
-  }
-  ;
-  res.send(result)
-})
-
-// app.post('/api/cook-book', async (req, res) => {
-//     let {titulo, href, resume, ingredientes, preparo } = r{{eq.body
-//     const result = await insertCook(titulo, href, resume, ingredientes, preparo);
-
-//     res.send(result);
-// })
-
-app.get('/api/cook-book:id', async (req, res) => {
+app.get('/api/v1/cook-book:id', async (req, res) => {
   console.log(req.params['id'])
   const params = req.params['id'].replace(':', '')
   let result = 401
   if (params != '' && params <= 100) {
     result = await getCookId(params)
+    res.send(result)
   }
   res.sendStatus(result);
 })
 
-app.get('/api/cook-book', async (req, res) => {
+
+app.get('/api/v1/cook-book', async (req, res) => {
   const result = await getCook_()
   res.send(result);
 })
 
-app.get('/api/shoope-banner', async(req, res) => {
-  const result = redis.get
+app.post('/api/v1/shoope-banner', async(req, res) => {
+  const { start, end } = req.body
+  const result = await getAllElements('ShopeeProduct', start, end)
+  res.send(result);
 })
-
 
 app.listen(port, function () {
   logger.info("[server]: Server is running at http://localhost:".concat(port));
